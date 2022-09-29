@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "Tenant settings";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Tenant settings</h1>
+</div>
+
+<h2>OAuth2 endpoints</h2>
+
+<div>
+    <div class="form-group">
+        <label for="Name" class="col-sm-4 control-label">Configuration endpoint</label>
+        <div class="col-sm-10">
+            <div class="form-control text-secondary">@ViewBag.OAuth2ConfigurationEndpoint</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="Name" class="col-sm-4 control-label">JWKs endpoint</label>
+        <div class="col-sm-10">
+            <div class="form-control text-secondary">@ViewBag.OAuth2JwksEndpoint</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="Name" class="col-sm-4 control-label" style="padding-top: 10px">Authorization endpoint</label>
+        <div class="col-sm-10">
+            <div class="form-control text-secondary">@ViewBag.OAuth2AuthorizationEndpoint</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="Name" class="col-sm-4 control-label" style="padding-top: 10px">Toke endpoint</label>
+        <div class="col-sm-10">
+            <div class="form-control text-secondary">@ViewBag.OAuth2TokenEndpoint</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="Name" class="col-sm-4 control-label" style="padding-top: 10px">User-info endpoint</label>
+        <div class="col-sm-10">
+            <div class="form-control text-secondary">@ViewBag.OAuth2UserInfoEndpoint</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="Name" class="col-sm-4 control-label" style="padding-top: 10px">End session endpoint</label>
+        <div class="col-sm-10">
+            <div class="form-control text-secondary">@ViewBag.OAuth2EndSessionEndpoint</div>
+        </div>
+    </div>
+</div>
+
+
+<h2 style="padding-top: 40px">Proxy endpoints</h2>
+
+Type the endpoints of your idenityt provider and select <b>Submit</b>.
+
+<form class="form-group" method="post">
+    <div class="form-group" style="padding-top: 10px">
+        <label for="Name" class="col-sm-4 control-label">Configuration endpoint</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="IdpConfigurationEndpoint" value="@ViewBag.ProxyConfigurationEndpoint">
+        </div>
+    </div>
+    <div class="form-group" style="padding-top: 10px">
+        <label for="Name" class="col-sm-4 control-label">Token endpoint</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="IdpTokenEndpoint" value="@ViewBag.ProxyTokenEndpoint">
+        </div>
+    </div>
+        <div class="form-group" style="padding-top: 10px">
+        <label for="Name" class="col-sm-4 control-label">User-info endpoint</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="IdpUserInfoEndpoint" value="@ViewBag.ProxyUserInfoEndpoint">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10" style="padding-top: 10px;">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</form>

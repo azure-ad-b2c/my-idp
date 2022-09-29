@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<style>
+
+    li{
+  line-height: 1.8;
+}
+</style>
+<div class="text-center">
+    <h1 class="display-4">Custom identity provider</h1>
+    <p><a asp-area="oauth2" asp-controller="authorize" asp-action="Index">SIGN IN</a></p>
+</div>
+<div class="text-left">
+    <h2>How to debug Identity provider federation with Azure AD B2C</h2>
+    <p>
+        To debug IDP federation, the proxy tool captures the requests and responses send and receive from the IDP.
+        Follow these steps to enable the debugger:
+    <ol>
+        <li>Setup a tenant ID by adding a name after the domain name. For example
+            <code>https://custom-idp.azurewebsites.net/<b>bobenvironment</b></code>
+        </li>
+        <li>From the menu, select <b>Tenant Settings</b>, and provide your Application insights instrumentation key.</li>
+        <li>From the menu, select <b>Endpoints</b>. Then, under the <b>Proxy endpoints</b> provide your one of the following:
+            <ul>
+                <li>Open ID Connect well-known <b>Configuration endpoint</b></li>
+                <li>For OAuth2 Identity providers, type the <b>Token endpoint</b> and the <b>User-info
+                endpoint</b>.</li>
+            </ul>
+        </li>
+        <li>Select <b>Submit</b>. The proxy app will return a new URL (base 64 code) that directs the traffic to the proxy endpoints. </li>
+        <li>In your custom policy, change the URLs with the one that you get after you submitted the URL in the previous
+            step.</li>
+        <li>Open your Application insights, go to the <b>Logs</b> and select the <b>customEvents</b>, then select <b>Run</b>
+            The following screenshot shows an example of the Application insights custom events: <br />
+
+            <img src="~/proxy-app-insights.png" />
+        </li>
+        <li>Select one of the custom events, then select <b>customDimensions</b> to check the content of the requst and response.<br />
+            The following screenshot shows an example of the Application insights custom event content: <br />
+
+            <img src="~/proxy-app-insights-content.png" />
+        </li>
+    </ol>
+
+
+    </p>
+</div>
+
+Version: @ViewData["Version"]

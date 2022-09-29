@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Sign in with custom OIDC identity provider</h1>
+</div>
+
+
+<form method="post">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-4" for="email">Email address:</label>
+            <div class="col-md-10">
+                <input class="form-control" type="text" id="email" name="email" value="" required />
+                <span class="text-danger field-validation-valid" data-valmsg-for="email" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-4" for="password">Password:</label>
+            <div class="col-md-10">
+                <input class="form-control" type="password" id="password" name="password" value="" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="password" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                <input class="form-control" type="hidden" id="state" name="state" value='@ViewData["state"]' />
+                <input class="form-control" type="hidden" id="scope" name="scope" value='@ViewData["scope"]' />
+                <input class="form-control" type="hidden" id="client_id" name="client_id" value='@ViewData["client_id"]' />
+                <input class="form-control" type="hidden" id="redirect_uri" name="redirect_uri" value='@ViewData["redirect_uri"]' />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Sign-in" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
