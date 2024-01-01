@@ -110,27 +110,33 @@ namespace custom_idp
             log.Add("RequestHeaders", headers);
 
             // Request body
-            try
+            if (!string.IsNullOrEmpty(responseBody))
             {
-                if (Request.Method == "POST" && Request.Body != null)
+                log.Add("RequestBody", responseBody);
+            }
+            else
+            {
+                try
                 {
-                    string body = "";
-                    using (StreamReader stream = new StreamReader(Request.Body))
+                    if (Request.Method == "POST" && Request.Body != null)
                     {
-                        body = await stream.ReadToEndAsync();
-                        log.Add("RequestBody", body);
+                        string body = "";
+                        using (StreamReader stream = new StreamReader(Request.Body))
+                        {
+                            body = await stream.ReadToEndAsync();
+                            log.Add("RequestBody", body);
+                        }
                     }
                 }
+                catch (ObjectDisposedException e)
+                {
+                    // The body object has been disposed in earlier call to this function
+                }
+                catch (System.Exception)
+                {
+                    // Don't throw error;
+                }
             }
-            catch (ObjectDisposedException e)
-            {
-                // The body object has been disposed in earlier call to this function
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
-
             // Response body
             if (Response != null)
             {
