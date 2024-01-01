@@ -42,7 +42,7 @@ namespace custom_idp.proxy.Controllers
             // Get the tenant settings
             SettingsEntity settings = _settingsService.GetConfig(tenantId);
 
-            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT + "Start", null, null, JsonSerializer.Serialize(new { Action = "Start reverse proxy", Base64URL = id, URL = HttpRequestHelper.GetTargetUrl(Request, id)  })).Wait();
+            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT + "Start", null, null, JsonSerializer.Serialize(new { Action = "Start reverse proxy", Base64URL = id, URL = HttpRequestHelper.GetTargetUrl(Request, id) })).Wait();
 
             // Check if the custom IDP tenant ID exists
             if (string.IsNullOrEmpty(id))
@@ -51,15 +51,20 @@ namespace custom_idp.proxy.Controllers
                 return BadRequest(new { error = "Cannot find the target identity provider token endpoint." });
             }
 
-            try 
+            try
             {
-                response = await CallIdentityProviderAsync(id);
+                var targetRequestMessage = await HttpRequestHelper.CreateRequestHttpMessageAsync(this.Request, id);
+                response = await _httpClient.SendAsync(targetRequestMessage, HttpCompletionOption.ResponseHeadersRead);
 
                 // Read the input claims from the response body
                 string body = await response.Content.ReadAsStringAsync();
 
                 Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT + "End", response, body).Wait();
 
+                // Here we ask the framework to dispose the response object a the end of the user request
+                this.HttpContext.Response.RegisterForDispose(response);
+
+                // Return the respons
                 return new HttpResponseMessageResult(response);
             }
             catch (System.Exception ex)
@@ -69,20 +74,5 @@ namespace custom_idp.proxy.Controllers
             }
 
         }
-
-        private async Task<HttpResponseMessage> CallIdentityProviderAsync(string IdpEndpoint)
-        {
-            var targetRequestMessage = await HttpRequestHelper.CreateRequestHttpMessageAsync(this.Request, IdpEndpoint);
-
-            var responseMessage = await _httpClient.SendAsync(targetRequestMessage, HttpCompletionOption.ResponseHeadersRead);
-
-            // Here we ask the framework to dispose the response object a the end of the user request
-            this.HttpContext.Response.RegisterForDispose(responseMessage);
-
-            return responseMessage;
-        }
-
-
-
     }
 }
