@@ -51,7 +51,7 @@ namespace custom_idp.proxy.Controllers
             }
             try
             {
-                response = await CallIdentityProviderAsync(tenantId, Uri.UnescapeDataString(id));
+                response = await CallIdentityProviderAsync( Uri.UnescapeDataString(id));
 
                 // Read the input claims from the response body
                 string body = await response.Content.ReadAsStringAsync();
@@ -73,7 +73,7 @@ namespace custom_idp.proxy.Controllers
             }
         }
 
-        private async Task<HttpResponseMessage> CallIdentityProviderAsync(string tenantId, string IdpEndpoint)
+        private async Task<HttpResponseMessage> CallIdentityProviderAsync(string IdpEndpoint)
         {
             var targetRequestMessage = await HttpRequestHelper.CreateRequestHttpMessageAsync(this.Request, IdpEndpoint);
 
