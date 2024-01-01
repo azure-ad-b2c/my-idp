@@ -41,7 +41,7 @@ namespace custom_idp.proxy.Controllers
             // Get the tenant settings
             SettingsEntity settings = _settingsService.GetConfig(tenantId);
 
-            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT + "Start", null, null, JsonSerializer.Serialize(new { Action = "Start reverse proxy", URL = id })).Wait();
+            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT + "Start", null, null, JsonSerializer.Serialize(new { Action = "Start reverse proxy", Base64URL = id, URL = HttpRequestHelper.GetTargetUrl(Request, id) })).Wait();
 
             // Check if HTTP GET is allowed
             if (string.IsNullOrEmpty(id))
@@ -51,7 +51,7 @@ namespace custom_idp.proxy.Controllers
             }
             try
             {
-                 response = await CallIdentityProviderAsync( Uri.UnescapeDataString(id));
+                response = await CallIdentityProviderAsync(Uri.UnescapeDataString(id));
 
                 // Read the input claims from the response body
                 string body = await response.Content.ReadAsStringAsync();
