@@ -42,7 +42,7 @@ namespace custom_idp.oauth2.Controllers
             // Check if service availble
             if (!settings.GetOAuth2Settings().JWKs.Enabled)
             {
-                Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, JsonSerializer.Serialize(new { error = "Service unavailable" }));
+                Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, null, JsonSerializer.Serialize(new { error = "Service unavailable" }));
                 return BadRequest(new { error = "Service unavailable" });
             }
 

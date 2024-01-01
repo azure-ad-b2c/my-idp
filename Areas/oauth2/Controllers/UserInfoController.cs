@@ -72,7 +72,7 @@ namespace custom_idp.oauth2.Controllers
                 payload.Add(item.Type, item.Value);
             }
 
-            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, JsonSerializer.Serialize(payload));
+            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, null, JsonSerializer.Serialize(payload));
 
             return Ok(payload);
         }

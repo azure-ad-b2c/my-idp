@@ -42,7 +42,7 @@ namespace custom_idp.oauth2.Controllers
             // Check if service availble
             if (!settings.GetOAuth2Settings().OpenIdConfiguration.Enabled)
             {
-                Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, JsonSerializer.Serialize(new { error = "Service unavailable" }));
+                Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, null, null, JsonSerializer.Serialize(new { error = "Service unavailable" }));
                 return BadRequest(new { error = "Service unavailable" });
             }
 
@@ -72,7 +72,7 @@ namespace custom_idp.oauth2.Controllers
                 IdTokenSigningAlgValuesSupported = new[] { OpenIdConfigurationController.SigningCredentials.Value.Algorithm }
             };
 
-            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, JsonSerializer.Serialize(payload));
+            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, null, JsonSerializer.Serialize(payload));
 
             return Ok(payload);
         }

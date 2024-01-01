@@ -69,7 +69,7 @@ namespace custom_idp.oauth2.Controllers
             if (client_id == "default")
                 URL = URL + $"&id_token={id_token}";
 
-            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, URL);
+            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, null, URL);
             return Redirect(URL);
 
         }

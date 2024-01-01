@@ -71,12 +71,14 @@ namespace custom_idp
             return jwtHandler.WriteToken(token);
         }
 
-        public static async Task LogRequestAsync(HttpRequest Request,
+        public static async Task LogRequestAsync(
+            HttpRequest Request,
             TelemetryClient telemetry,
             SettingsEntity settings,
             string tenantId,
             string page,
-            string? response = null,
+            HttpResponseMessage Response = null,
+            string? responseBody = null,
             string? additionalData = null)
         {
             if (string.IsNullOrEmpty(settings.InstrumentationKey))
@@ -91,8 +93,8 @@ namespace custom_idp
 
             Dictionary<string, string> log = new Dictionary<string, string>();
 
-            log.Add("Method", Request.Method);
-            log.Add("URL", $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
+            log.Add("RequestMethod", Request.Method);
+            log.Add("RequestURL", $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
             log.Add("TenantId", tenantId);
 
             // Get the target URL
@@ -105,7 +107,7 @@ namespace custom_idp
 
             // Request headers
             string headers = JsonSerializer.Serialize(Request.Headers);
-            log.Add("Headers", headers);
+            log.Add("RequestHeaders", headers);
 
             // Request body
             try
@@ -116,7 +118,7 @@ namespace custom_idp
                     using (StreamReader stream = new StreamReader(Request.Body))
                     {
                         body = await stream.ReadToEndAsync();
-                        log.Add("Body", body);
+                        log.Add("RequestBody", body);
                     }
                 }
             }
@@ -129,10 +131,16 @@ namespace custom_idp
                 throw;
             }
 
-
-            if (!string.IsNullOrEmpty(response))
+            // Response body
+            if (Response != null)
             {
-                log.Add("Response", response);
+                log.Add("ResponseStatusCode", Response.StatusCode.ToString());
+            }
+
+            // Response body
+            if (!string.IsNullOrEmpty(responseBody))
+            {
+                log.Add("ResponseBody", responseBody);
             }
 
             if (!string.IsNullOrEmpty(additionalData))
@@ -143,7 +151,7 @@ namespace custom_idp
             telemetry.TrackEvent($"{tenantId}_{page}", log);
             telemetry.Flush();
         }
-        public static void LogError(HttpRequest Request, TelemetryClient telemetry, SettingsEntity settings, string tenantId, string page, string error)
+        public static void LogError(HttpRequest Request, TelemetryClient telemetry, SettingsEntity settings, string tenantId, string page, string error, HttpResponseMessage Response = null)
         {
             if (string.IsNullOrEmpty(settings.InstrumentationKey))
             {
@@ -153,10 +161,17 @@ namespace custom_idp
             telemetry.InstrumentationKey = settings.InstrumentationKey;
 
             Dictionary<string, string> log = new Dictionary<string, string>();
-            log.Add("Method", Request.Method);
-            log.Add("URL", $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
+            log.Add("RequestMethod", Request.Method);
+            log.Add("RequestURL", $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
             log.Add("Error", error);
             log.Add("TenantId", tenantId);
+
+            // Response body
+            if (Response != null)
+            {
+                log.Add("ResponseStatusCode", Response.StatusCode.ToString());
+            }
+
             telemetry.TrackEvent($"{tenantId}_{page}", log);
             telemetry.Flush();
         }

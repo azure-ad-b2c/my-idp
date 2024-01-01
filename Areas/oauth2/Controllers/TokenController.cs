@@ -43,7 +43,7 @@ namespace custom_idp.oauth2.Controllers
             // Check if HTTP GET is allowed
             if (!settings.GetOAuth2Settings().Token.HttpMethods.GET)
             {
-                await Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, JsonSerializer.Serialize(new { error = "GET request is not allowed." }));
+                await Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, null, JsonSerializer.Serialize(new { error = "GET request is not allowed." }));
                 return BadRequest(new { error = "GET request is not allowed." });
             }
 
@@ -141,7 +141,7 @@ namespace custom_idp.oauth2.Controllers
                     tenantId = tenantId
                 };
 
-                await Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, JsonSerializer.Serialize(payload));
+                await Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, null, JsonSerializer.Serialize(payload));
 
                 return new OkObjectResult(payload);
             }

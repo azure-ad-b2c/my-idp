@@ -36,6 +36,8 @@ namespace custom_idp.proxy.Controllers
         [ActionName("invoke")]
         public async Task<IActionResult> IndexGetAsync(string tenantId, string id)
         {
+            HttpResponseMessage response = null;
+
             // Get the tenant settings
             SettingsEntity settings = _settingsService.GetConfig(tenantId);
 
@@ -44,12 +46,12 @@ namespace custom_idp.proxy.Controllers
             // Check if HTTP GET is allowed
             if (string.IsNullOrEmpty(id))
             {
-                await Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, JsonSerializer.Serialize(new { error = "Target token URL is not configured." }));
+                await Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, null, JsonSerializer.Serialize(new { error = "Target token URL is not configured." }));
                 return BadRequest(new { error = "Cannot find the target identity provider well known configuration endpoint." });
             }
             try
             {
-                HttpResponseMessage response = await CallIdentityProviderAsync(tenantId, Uri.UnescapeDataString(id));
+                response = await CallIdentityProviderAsync(tenantId, Uri.UnescapeDataString(id));
 
                 // Read the input claims from the response body
                 string body = await response.Content.ReadAsStringAsync();
@@ -60,13 +62,13 @@ namespace custom_idp.proxy.Controllers
                 payload.TokenEndpoint = Url.ActionLink("Invoke", "Token", new { Area = "proxy", tenantId = tenantId }) + "/" + HttpRequestHelper.Base64Encode(payload.TokenEndpoint);
                 payload.UserInfoEndpoint = Url.ActionLink("Invoke", "UserInfo", new { Area = "proxy", tenantId = tenantId }) + "/" + HttpRequestHelper.Base64Encode(payload.UserInfoEndpoint);
 
-                Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT + "End", JsonSerializer.Serialize(payload)).Wait();
+                Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT + "End", response, JsonSerializer.Serialize(payload)).Wait();
 
                 return Ok(payload);
             }
             catch (System.Exception ex)
             {
-                Commons.LogError(Request, _telemetry, settings, tenantId, EVENT + "Error", ex.Message);
+                Commons.LogError(Request, _telemetry, settings, tenantId, EVENT + "Error", ex.Message, response);
                 return BadRequest(new { error = ex.Message });
             }
         }

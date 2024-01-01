@@ -37,31 +37,32 @@ namespace custom_idp.proxy.Controllers
         [ActionName("invoke")]
         public async Task<IActionResult> IndexGetAsync(string tenantId, string id)
         {
+            HttpResponseMessage response = null;
             // Get the tenant settings
             SettingsEntity settings = _settingsService.GetConfig(tenantId);
 
-            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT + "Start", null, JsonSerializer.Serialize(new { Action = "Start reverse proxy", URL = id })).Wait();
+            Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT + "Start", null, null, JsonSerializer.Serialize(new { Action = "Start reverse proxy", URL = id })).Wait();
 
             // Check if HTTP GET is allowed
             if (string.IsNullOrEmpty(id))
             {
-                await Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, JsonSerializer.Serialize(new { error = "Target token URL is not configured." }));
+                await Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT, null, JsonSerializer.Serialize(new { error = "Target token URL is not configured." }));
                 return BadRequest(new { error = "Cannot find the target identity provider token endpoint." });
             }
             try
             {
-                HttpResponseMessage response = await CallIdentityProviderAsync(tenantId, Uri.UnescapeDataString(id));
+                 response = await CallIdentityProviderAsync(tenantId, Uri.UnescapeDataString(id));
 
                 // Read the input claims from the response body
                 string body = await response.Content.ReadAsStringAsync();
 
-                Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT + "End", body).Wait();
+                Commons.LogRequestAsync(Request, _telemetry, settings, tenantId, EVENT + "End", response, body).Wait();
 
                 return new HttpResponseMessageResult(response);
             }
             catch (System.Exception ex)
             {
-                Commons.LogError(Request, _telemetry, settings, tenantId, EVENT + "Error", ex.Message);
+                Commons.LogError(Request, _telemetry, settings, tenantId, EVENT + "Error", ex.Message, response);
                 return BadRequest(new { error = ex.Message });
             }
         }
