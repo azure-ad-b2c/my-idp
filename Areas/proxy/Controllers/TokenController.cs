@@ -54,7 +54,7 @@ namespace custom_idp.proxy.Controllers
             try
             {
                 var targetRequestMessage = await HttpRequestHelper.CreateRequestHttpMessageAsync(this.Request, id);
-                response = await _httpClient.SendAsync(targetRequestMessage, HttpCompletionOption.ResponseHeadersRead);
+                response = await _httpClient.SendAsync(targetRequestMessage, HttpCompletionOption.ResponseContentRead);
 
                 // Read the input claims from the response body
                 string body = await response.Content.ReadAsStringAsync();
