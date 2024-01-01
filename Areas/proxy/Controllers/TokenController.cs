@@ -51,7 +51,7 @@ namespace custom_idp.proxy.Controllers
                 return BadRequest(new { error = "Cannot find the target identity provider token endpoint." });
             }
 
-            try
+            try 
             {
                 response = await CallIdentityProviderAsync(tenantId, id);
 
